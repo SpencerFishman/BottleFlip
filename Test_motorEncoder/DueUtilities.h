@@ -1,5 +1,5 @@
 #ifndef DUEUTILITIES_INCLUDEGUARD
-#define #DUEUTILITIES_INCLUDEGUARD
+#define DUEUTILITIES_INCLUDEGUARD
 
 #include <Arduino.h>
 
@@ -9,3 +9,4 @@ namespace DueUTIL {
 }
 
 #endif
+

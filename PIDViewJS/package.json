@@ -1,0 +1,11 @@
+{
+  "name": "pidview.js",
+  "version": "1.0.0",
+  "description": "View PID data from a serial port as it is created LIVE",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "author": "Spencer Fishman",
+  "license": "ISC"
+}

@@ -47,3 +47,4 @@ namespace DueUTIL {
 		return pioBits[pinNumber];
 	}
 }
+

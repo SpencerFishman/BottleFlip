@@ -1,58 +1,48 @@
 #include "Encoder.h"
 
 namespace Encoders {
-  struct Encoder {
-    long position;
-    Pio* APIO;
-    Pio* BPIO;
-    byte APIOBit;
-    byte APIOBit;
-    byte pinA1, pinA2;
-    byte pinB1, pinB2;
+  Encoder *encs[6];
+    
+  Encoder::Encoder(byte pinA1, byte pinB1) {
+    position = 0;
 
-    Encoder(byte pinA1, byte pinB1) {
-      position = 0;
+    APIO = DueUTIL::getPIOFromPin(pinA1);
+    BPIO = DueUTIL::getPIOFromPin(pinB1);
+    APIOBit = DueUTIL::getPinPIOBit(pinA1);
+    BPIOBit = DueUTIL::getPinPIOBit(pinB1);
+    
+    pinMode(pinA1, INPUT);
+    pinMode(pinB1, INPUT);
+  }
 
-      APIO = DueUTIL::getPIOFromPin(pinA1);
-      BPIO = DueUTIL::getPIOFromPin(pinB1);
-      APIOBit = DueUTIL::getPinPIOBit(pinA1);
-      BPIOBit = DueUTIL::getPinPIOBit(pinB1);
-      
-      pinMode(pinA1, INPUT);
-      pinMode(pinB1, INPUT);
-    }
+  Encoder::Encoder(byte pinA1, byte pinA2, byte pinB1) {
+    position = 0;
 
-    Encoder(byte pinA1, byte pinA2, byte pinB1) {
-      position = 0;
+    APIO = DueUTIL::getPIOFromPin(pinA1);
+    BPIO = DueUTIL::getPIOFromPin(pinB1);
+    APIOBit = DueUTIL::getPinPIOBit(pinA1);
+    BPIOBit = DueUTIL::getPinPIOBit(pinB1);
+    
+    pinMode(pinA1, INPUT);
+    pinMode(pinA2, INPUT);
+    pinMode(pinB1, INPUT);
+  }
 
-      APIO = DueUTIL::getPIOFromPin(pinA1);
-      BPIO = DueUTIL::getPIOFromPin(pinB1);
-      APIOBit = DueUTIL::getPinPIOBit(pinA1);
-      BPIOBit = DueUTIL::getPinPIOBit(pinB1);
-      
-      pinMode(pinA1, INPUT);
-      pinMode(pinA2, INPUT);
-      pinMode(pinB1, INPUT);
-    }
+  Encoder::Encoder(byte pinA1, byte pinA2, byte pinB1, byte pinB2) {
+    position = 0;
 
-    Encoder(byte pinA1, byte pinA2, byte pinB1, byte pinB2) {
-      position = 0;
+    APIO = DueUTIL::getPIOFromPin(pinA1);
+    BPIO = DueUTIL::getPIOFromPin(pinB1);
+    APIOBit = DueUTIL::getPinPIOBit(pinA1);
+    BPIOBit = DueUTIL::getPinPIOBit(pinB1);
+    
+    pinMode(pinA1, INPUT);
+    pinMode(pinA2, INPUT);
+    pinMode(pinB1, INPUT);
+    pinMode(pinB2, INPUT);
+  }
 
-      APIO = DueUTIL::getPIOFromPin(pinA1);
-      BPIO = DueUTIL::getPIOFromPin(pinB1);
-      APIOBit = DueUTIL::getPinPIOBit(pinA1);
-      BPIOBit = DueUTIL::getPinPIOBit(pinB1);
-      
-      pinMode(pinA1, INPUT);
-      pinMode(pinA2, INPUT);
-      pinMode(pinB1, INPUT);
-      pinMode(pinB2, INPUT);
-    }
-  };
-
-  Encoder encs[6];
-
-  Encoder encoder(size_t encoderNum) {
+  Encoder* encoder(size_t encoderNum) {
     return encs[encoderNum - 1];
   }
 
@@ -175,3 +165,4 @@ namespace Encoders {
     encs[5]->position += (encs[5]->BPIO->PIO_PDSR & (1 << encs[5]->BPIOBit)) ? +1 : -1;
   }
 }
+

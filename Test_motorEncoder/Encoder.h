@@ -1,8 +1,5 @@
 #ifndef ENCODER_INCLUDEGUARD
-#define #ENCODER_INCLUDEGUARD
-
-//C++ Includes
-#include <vector>
+#define ENCODER_INCLUDEGUARD
 
 // Custom C++ Includes
 #include "DueUtilities.h"
@@ -16,20 +13,16 @@ namespace Encoders {
     Pio* APIO;
     Pio* BPIO;
     byte APIOBit;
-    byte APIOBit;
-    byte pinA1, pinA2;
-    byte pinB1, pinB2;
+    byte BPIOBit;
 
+    Encoder(){};
     Encoder(byte,byte);
     Encoder(byte,byte,byte);
     Encoder(byte,byte,byte,byte);
   };
 
-  Encoder encs[6];
 
-  Encoder encoder(size_t) {
-
-  }
+  Encoder* encoder(size_t);
 
   /**
    * Encoder Setups
@@ -78,3 +71,4 @@ namespace Encoders {
 }
 
 #endif
+

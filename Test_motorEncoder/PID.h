@@ -1,5 +1,7 @@
 #ifndef PID_INCLUDEGUARD
-#define #PID_INCLUDEGUARD
+#define PID_INCLUDEGUARD
+
+#include <Arduino.h>
 
 struct PID {
   double sp, oMin, oMax;
@@ -8,11 +10,14 @@ struct PID {
   double kD, preError;
   bool iCoolD;
 
-  PID();
+  PID(double);
+  PID(double,double,double,double);
   
+  void init();
   double calculate(double,double);
 };
 
 template <typename T> int sgn(T val);
 
 #endif
+

@@ -1,5 +1,6 @@
 // C++ Includes
 #include <vector>
+#include <stdlib.h> 
 
 // Custom C++ Includes
 #include "PID.h"
@@ -15,19 +16,40 @@ Adafruit_MotorShield AFMS = Adafruit_MotorShield();
 Adafruit_DCMotor *motor1 = AFMS.getMotor(1);
 
 // PID
-std::vector<PID> pids;
+//std::vector<PID*> pids;
+PID *pid;
+
+
+long dt;
 
 void setup() {
   Serial.begin(9600);
 
   AFMS.begin();
-  motor1->setSpeed(150);
-  motor1->run(FORWARD);
   
   Encoders::beginEnc1(2,4,3,5);
+  pid = new PID(8000,0.25,0,7000);
+  pid->oMax = 255;
+  pid->oMin = -255;
+  dt=1;
 }
 
 void loop() {
-  Serial.println(Encoders::encoder(1)->position);
-  delay(10);
+  long pos = Encoders::encoder(1)->position;
+  int cO = (int) pid->calculate(pos, micros() - dt);
+  dt = micros();
+  Serial.print("Position: ");
+  Serial.print(pos);
+  Serial.print("    ControlValue: ");
+  Serial.print(cO);
+  Serial.print("    SetPoint: ");
+  Serial.println(pid->sp);
+  if (cO > 0)
+    motor1->run(BACKWARD);
+  else
+    motor1->run(FORWARD);
+  motor1->setSpeed(abs(cO));
 }
+
+
+
