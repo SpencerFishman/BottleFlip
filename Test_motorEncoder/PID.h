@@ -15,6 +15,8 @@ struct PID {
   
   void init();
   double calculate(double,double);
+  void zero();
+  void zero(double);
 };
 
 template <typename T> int sgn(T val);

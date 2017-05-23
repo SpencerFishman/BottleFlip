@@ -12,67 +12,98 @@
 
 // Motor functions
 Adafruit_MotorShield AFMS = Adafruit_MotorShield(); 
-Adafruit_DCMotor *motor1 = AFMS.getMotor(1);
 
 // Motor
-PID *pid;
+struct Motor {
+  Adafruit_DCMotor *adMotor;
+  Encoders::Encoder *enc;
+  PID *pid;
 
+  bool runPID;
+  bool revM;
 
-long dt;
-long pods[4];
-bool up;
+  Motor(int motNum) {
+    adMotor = AFMS.getMotor(motNum);
+
+    pid = new PID(0,0,0,0);
+    pid->oMax = 255;
+    pid->oMin = -255;
+
+    runPID = false;
+    revM = false;
+  }
+
+  void setEnc(Encoders::Encoder *encP) {
+    enc = encP;
+    enc->zero();
+  }
+
+  long getPosition() {
+    return enc->position;
+  }
+
+  void setPower(int power) {
+    power = (power > 255) ? 255 : ((power < -255) ? -255 : power);
+    adMotor->run((power >= 0 && !revM) ? FORWARD : BACKWARD);
+    adMotor->setSpeed(abs(power));
+  }
+
+  void reverseMotor() {
+    revM = !revM;
+  }
+
+  void reverse() {
+    reverseMotor();
+    enc->reverse();
+  }
+
+  void startGoto(int target) {
+    pid->sp = target;
+    runPID = true;
+  }
+
+  void stopGoto() {
+    pid->sp = enc->position;
+    runPID = false;
+  }
+
+  void tick(long dt) {
+    if (runPID) {
+      double di = pid->calculate(enc->position,dt);
+      setPower(di);
+    }
+  }
+
+  void print() {
+    Serial.print("Position: ");
+    Serial.print(enc->position);
+    Serial.print("    SetPoint: ");
+    Serial.println(pid->sp);
+  }
+};
+
+Motor *mot;
+unsigned long t;
 
 void setup() {
   Serial.begin(9600);
 
   AFMS.begin();
   
-  Encoders::beginEnc1(2,4,3,5);
-  pid = new PID(-2500,0.35,0,0);
-  pid->oMax = 255;
-  pid->oMin = -255;
-  dt=1;
+  mot = new Motor(1);
+  mot->pid->kP = 1;
+  mot->setEnc(Encoders::beginEnc6(2, 3));
 
-  pods[0] = 0;
-  pods[1] = 0;
-  pods[2] = 0;
-  pods[3] = 0;
+  mot->startGoto(-1700);
 
-  up = true;
+  t = micros();
 }
 
 void loop() {
-  long pos = Encoders::encoder(1)->position;
-  int cO = (int) pid->calculate(pos, micros() - dt);
-  dt = micros();
-  Serial.print("Position: ");
-  Serial.print(pos);
-  Serial.print("    ControlValue: ");
-  Serial.print(cO);
-  Serial.print("    SetPoint: ");
-  Serial.println(pid->sp);
-  if (cO > 0)
-    motor1->run(BACKWARD);
-  else
-    motor1->run(FORWARD);
-  motor1->setSpeed(abs(cO));
-  if (pods[0] == Encoders::encoder(1)->position && (pods[0] <= -2000 || up == false) ) {
-    pods[0] = 0;
-    pods[1] = 0;
-    pods[2] = 0;
-    pods[3] = 0;
+  mot->tick(micros() - t);
+  mot->print();
 
-    if (up)
-      pid->sp = 0;
-    else
-      pid->sp = -2500;
-    up = !up;
-  }
-
-  pods[0] = pods[1];
-  pods[1] = pods[2];
-  pods[2] = pods[3];
-  pods[3] = Encoders::encoder(1)->position;
+  t = micros();
 }
 
 
