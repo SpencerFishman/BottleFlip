@@ -72,6 +72,14 @@ namespace Encoders {
   // Encoder 6: 1x Resolution Encoder
   Encoder * beginEnc6(byte, byte);
   void enc6ARise();
+
+  // Encoder 7: 1x Resolution Encoder
+  Encoder * beginEnc7(byte, byte);
+  void enc7ARise();
+
+  // Encoder 8: 1x Resolution Encoder
+  Encoder * beginEnc8(byte, byte);
+  void enc8ARise();
 }
 
 #endif

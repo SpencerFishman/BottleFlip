@@ -1,7 +1,7 @@
 #include "Encoder.h"
 
 namespace Encoders {
-  Encoder *encs[6];
+  Encoder *encs[8];
     
   Encoder::Encoder(byte pinA1, byte pinB1) {
     position = 0;
@@ -159,6 +159,8 @@ namespace Encoders {
     encs[4] = new Encoder(pinA1,pinB1);
 
     attachInterrupt(pinA1, enc5ARise, RISING);
+
+    return encs[4];
   }
 
   void enc5ARise() {
@@ -176,6 +178,32 @@ namespace Encoders {
 
   void enc6ARise() {
     encs[5]->position += encs[5]->directionMod * ((encs[5]->BPIO->PIO_PDSR & (1 << encs[5]->BPIOBit)) ? +1 : -1);
+  }
+
+  // Encoder 7: 1x Resolution Encoder
+  Encoder * beginEnc7(byte pinA1, byte pinB1) {
+    encs[6] = new Encoder(pinA1,pinB1);
+
+    attachInterrupt(pinA1, enc7ARise, RISING);
+
+    return encs[6];
+  }
+
+  void enc7ARise() {
+    encs[6]->position += encs[6]->directionMod * ((encs[6]->BPIO->PIO_PDSR & (1 << encs[6]->BPIOBit)) ? +1 : -1);
+  }
+
+  // Encoder 8: 1x Resolution Encoder
+  Encoder * beginEnc8(byte pinA1, byte pinB1) {
+    encs[7] = new Encoder(pinA1,pinB1);
+
+    attachInterrupt(pinA1, enc8ARise, RISING);
+
+    return encs[7];
+  }
+
+  void enc8ARise() {
+    encs[7]->position += encs[7]->directionMod * ((encs[7]->BPIO->PIO_PDSR & (1 << encs[7]->BPIOBit)) ? +1 : -1);
   }
 }
 
